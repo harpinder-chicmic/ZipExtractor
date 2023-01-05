@@ -68,7 +68,7 @@ export class Zip extends Component {
                             _data: tempArr,
                             width: 442,
                             height: 394,
-                            format: Texture2D.PixelFormat.RGB888,
+                            format: Texture2D.PixelFormat.RGBA8888,
                             _compressed: false,
                         });
                         let tex: Texture2D = new Texture2D();
