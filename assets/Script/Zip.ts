@@ -58,7 +58,7 @@ export class Zip extends Component {
                 JSZip.loadAsync(blob)
                     .then((zip) => {
                         console.log("LOADED SUCCESS", zip);
-                        return zip.file("Mask/maskLeft.raw").async("uint8array");
+                        return zip.file("Mask/maskLeft.png").async("uint8array");
                     })
                     .then((tempArr) => {
                         console.log(tempArr);
