@@ -1,4 +1,4 @@
-import { _decorator, Component, Node, ImageAsset, SpriteFrame, Texture2D, Sprite } from "cc";
+import { _decorator, Component, Node, ImageAsset, SpriteFrame, Texture2D, Sprite, find } from "cc";
 const { ccclass, property } = _decorator;
 // import http from "http";
 import JSZip from "jszip";
@@ -32,9 +32,9 @@ export class Zip extends Component {
         console.log(zip);
 
         //Picture
-        // this.loadUsingRequest("https://drive.google.com/uc?export=download&id=11VavLnyqmXO3kg9nrcH8jTO-mK79QqS0");
+        // this.loadUsingRequest("https://drive.google.com/uc?export=download&id=1f0FHWfXE4exUErKzzsOj_7GTuc1FmtEg");
 
-        //Mask
+        // Mask
         this.loadUsingRequest("https://drive.google.com/uc?export=download&id=14MVx2mgsInNdfYx8jQ-6QwwgbPASpxQt");
 
         // this.loadFromRemote();
@@ -55,29 +55,26 @@ export class Zip extends Component {
             .then((blob) => {
                 console.log(blob);
 
-                JSZip.loadAsync(blob)
-                    .then((zip) => {
-                        console.log("LOADED SUCCESS", zip);
-                        return zip.file("Mask/maskLeft.png").async("uint8array");
-                    })
-                    .then((tempArr) => {
-                        console.log(tempArr);
-                        let pixelsArr: ArrayBufferView = new Uint8Array(tempArr);
-                        let imageAsset: ImageAsset = new ImageAsset();
-                        imageAsset.reset({
-                            _data: tempArr,
-                            width: 442,
-                            height: 394,
-                            format: Texture2D.PixelFormat.RGBA8888,
-                            _compressed: false,
+                JSZip.loadAsync(blob).then((zip) => {
+                    console.log("LOADED SUCCESS", zip);
+                    return zip
+                        .file("Mask/maskLeft.png")
+                        .async("base64")
+                        .then((data: string) => {
+                            let img = new Image();
+                            img.src = "data:image/png;base64, " + data;
+                            console.log(data);
+                            img.onload = () => {
+                                let imageAsset: ImageAsset = new ImageAsset(img);
+                                let tex: Texture2D = new Texture2D();
+                                tex.image = imageAsset;
+                                let spriteFrame = new SpriteFrame();
+                                spriteFrame.texture = tex;
+                                spriteFrame.packable = false;
+                                this.RandomSprite.spriteFrame = spriteFrame;
+                            };
                         });
-                        let tex: Texture2D = new Texture2D();
-                        tex.image = imageAsset;
-                        let spriteFrame = new SpriteFrame();
-                        spriteFrame.texture = tex;
-                        spriteFrame.packable = false;
-                        this.RandomSprite.spriteFrame = spriteFrame;
-                    });
+                });
             });
     }
 
